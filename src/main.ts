@@ -1,25 +1,43 @@
 import 'dotenv/config';
+import VkBot from 'node-vk-bot-api';
 
-const VkBot = require('node-vk-bot-api');
-const bot = new VkBot(process.env.VK_API_KEY);
+const bot = new VkBot({ token: process.env.VK_API_KEY!, group_id: parseInt(process.env.VK_GROUP_ID!) });
 
-// bot.use((ctx: any, next: any) => {
-//   console.log(ctx.message.text);
-// });
-
-bot.on((ctx: any) => {
-  console.log(ctx);
-  if (ctx.message.type === 'message_new') {
-    ctx.reply(ctx.message.text);
-    return console.log(ctx.message.text);
+bot.command('Начать', (ctx, next) => {
+  if (ctx.message.payload === '{"command": "start"}') {
+    console.log(`START - ${ctx.message.text}`);
+    ctx.reply('Я вас категорически приветствую!');
   }
-  if (ctx.message.type === 'group_join') {
-    ctx.reply('Приветствуем в группе!');
-    return console.log(ctx.message.text);
-  }
-  //   if (ctx.message.type === 'join')
-
-  //   ctx.reply(ctx);
 });
 
-bot.startPolling();
+bot.command('Прайс', (ctx, next) => {
+  console.log(`PRICE - ${ctx.message.text}`);
+  ctx.reply('Цены такие-то...');
+});
+
+bot.command('Услуги', (ctx, next) => {
+  console.log(`SERVICES - ${ctx.message.text}`);
+  ctx.reply('Услуги такие-то...');
+});
+
+bot.startPolling((err) => {
+  if (err) {
+    console.error(err);
+  }
+  return {};
+});
+
+bot.use(async (ctx) => {
+  // @ts-ignore
+  if (ctx.message.type === 'message_new') {
+    console.log(ctx);
+  }
+
+  // if (ctx.message.type === 'group_join') {
+  //   console.log('НОВЫЙ ЧЛЕН');
+  //   console.log(ctx);
+
+  //   await ctx.('Приветствуем в группе!');
+  //   return console.log(ctx.message.text);
+  // }
+});
